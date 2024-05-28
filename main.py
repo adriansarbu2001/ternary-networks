@@ -46,6 +46,7 @@ if __name__ == "__main__":
 
 
 """
+SimpleCNN output:
 Using device: cuda:0
 Epoch 1, Training Loss: 0.520, Validation Loss: 0.145
 Epoch 2, Training Loss: 0.117, Validation Loss: 0.101
@@ -57,5 +58,13 @@ Accuracy of the network on the 2000 test images: 98.00%
 """
 
 """
-
+SimpleTWN output:
+Using device: cuda:0
+Epoch 1, Training Loss: 1.570, Validation Loss: 0.947
+Epoch 2, Training Loss: 0.525, Validation Loss: 0.427
+Epoch 3, Training Loss: 0.403, Validation Loss: 0.382
+Epoch 4, Training Loss: 0.355, Validation Loss: 0.327
+Epoch 5, Training Loss: 0.322, Validation Loss: 0.306
+Finished Training
+Accuracy of the network on the 2000 test images: 91.05%
 """

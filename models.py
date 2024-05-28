@@ -33,7 +33,7 @@ def Delta(tensor):
     n = tensor[0].nelement()
     if len(tensor.size()) == 4:  # convolution layer
         delta = 0.7 * tensor.norm(1, 3).sum(2).sum(1).div(n)
-    elif len(tensor.size()) == 2:  # fc layer
+    elif len(tensor.size()) == 2:  # linear layer
         delta = 0.7 * tensor.norm(1, 1).div(n)
     return delta
 

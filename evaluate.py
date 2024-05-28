@@ -1,5 +1,6 @@
 import torch
 
+
 def test_model(net, testloader, device):
     net.to(device)
     correct = 0

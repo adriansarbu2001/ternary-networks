@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import Subset
 
 
-def get_data_loaders(batch_size=64, train_size=10000, val_size=2000, test_size=2000):
+def get_data_loaders(batch_size=64, train_size=10000, val_size=5000, test_size=2000):
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.5,), (0.5,))
