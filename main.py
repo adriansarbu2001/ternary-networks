@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.optim as optim
 import random
 import numpy as np
+
+from admm_optimizer import ADMMOptimizer
 from data import get_data_loaders
 from models import SimpleCNN, SimpleTWN
 from train import train_model
@@ -29,20 +31,27 @@ def main(model_type="cnn"):
     print(f'Using device: {device}')
 
     net = SimpleCNN()
+    optimizer = optim.Adam(net.parameters(), lr=0.005)
     if model_type == "cnn":
         net = SimpleCNN()
+        optimizer = optim.Adam(net.parameters(), lr=0.005)
     elif model_type == "twn":
         net = SimpleTWN()
+        optimizer = optim.Adam(net.parameters(), lr=0.005)
+    elif model_type == "admm":
+        net = SimpleCNN()
+        optimizer = ADMMOptimizer(net.parameters(), rho=1e-4, base_optimizer_cls=optim.Adam, lr=0.005)
+
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(net.parameters(), lr=0.005)
+
     train_losses, val_losses = train_model(net, trainloader, valloader, criterion, optimizer, device)
     test_model(net, testloader, device)
     plot_losses(train_losses, val_losses)
 
 
 if __name__ == "__main__":
-    main(model_type="twn")
+    main(model_type="admm")
 
 
 """
@@ -67,4 +76,16 @@ Epoch 4, Training Loss: 0.355, Validation Loss: 0.327
 Epoch 5, Training Loss: 0.322, Validation Loss: 0.306
 Finished Training
 Accuracy of the network on the 2000 test images: 91.05%
+"""
+
+"""
+ADMM output:
+Using device: cuda:0
+Epoch 1, Training Loss: 0.710, Validation Loss: 0.219
+Epoch 2, Training Loss: 0.165, Validation Loss: 0.139
+Epoch 3, Training Loss: 0.106, Validation Loss: 0.095
+Epoch 4, Training Loss: 0.076, Validation Loss: 0.097
+Epoch 5, Training Loss: 0.067, Validation Loss: 0.088
+Finished Training
+Accuracy of the network on the 2000 test images: 98.20%
 """
