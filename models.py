@@ -4,48 +4,13 @@ import torch.nn.functional as F
 
 
 def Ternarize(tensor):
-    output = torch.zeros(tensor.size(), device=tensor.device)
-    delta = Delta(tensor)
-    alpha = Alpha(tensor, delta)
-    for i in range(tensor.size()[0]):
-        pos_one = (tensor[i] > delta[i]).float()
-        neg_one = -1 * (tensor[i] < -delta[i]).float()
-        out = torch.add(pos_one, neg_one)
-        output[i] = torch.mul(out, alpha[i])
-    return output
+    delta = 0.7 * torch.mean(torch.abs(tensor))
+    alpha = torch.mean(torch.abs(tensor[tensor.abs() >= delta]))
 
+    tensor_tern = torch.zeros_like(tensor)
+    tensor_tern[tensor.abs() >= delta] = torch.sign(tensor[tensor.abs() >= delta]) * alpha
 
-def Alpha(tensor, delta):
-    Alpha = []
-    for i in range(tensor.size()[0]):
-        count = 0
-        abssum = 0
-        absvalue = tensor[i].view(1, -1).abs()
-        truth_value = absvalue > delta[i]
-        count = truth_value.sum()
-        abssum = (absvalue * truth_value.float()).sum()
-        Alpha.append(abssum / count)
-    alpha = torch.stack(Alpha)
-    return alpha
-
-
-def Delta(tensor):
-    n = tensor[0].nelement()
-    if len(tensor.size()) == 4:  # convolution layer
-        delta = 0.7 * tensor.norm(1, 3).sum(2).sum(1).div(n)
-    elif len(tensor.size()) == 2:  # linear layer
-        delta = 0.7 * tensor.norm(1, 1).div(n)
-    return delta
-
-
-class TernaryLinear(nn.Linear):
-    def __init__(self, *args, **kwargs):
-        super(TernaryLinear, self).__init__(*args, **kwargs)
-
-    def forward(self, input):
-        self.weight.data = Ternarize(self.weight.data)
-        out = F.linear(input, self.weight, self.bias)
-        return out
+    return tensor_tern
 
 
 class TernaryConv2d(nn.Conv2d):
@@ -53,9 +18,23 @@ class TernaryConv2d(nn.Conv2d):
         super(TernaryConv2d, self).__init__(*args, **kwargs)
 
     def forward(self, input):
-        self.weight.data = Ternarize(self.weight.data)
-        out = F.conv2d(input, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
-        return out
+        device = input.device
+        self.weight.data = Ternarize(self.weight.data.to(device))
+        if self.bias is not None:
+            self.bias.data = Ternarize(self.bias.data.to(device))
+        return F.conv2d(input, self.weight, self.bias, self.stride, self.padding, self.dilation, self.groups)
+
+
+class TernaryLinear(nn.Linear):
+    def __init__(self, *args, **kwargs):
+        super(TernaryLinear, self).__init__(*args, **kwargs)
+
+    def forward(self, input):
+        device = input.device
+        self.weight.data = Ternarize(self.weight.data.to(device))
+        if self.bias is not None:
+            self.bias.data = Ternarize(self.bias.data.to(device))
+        return F.linear(input, self.weight, self.bias)
 
 
 class SimpleCNN(nn.Module):

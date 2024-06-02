@@ -17,10 +17,8 @@ class ADMMOptimizer(optim.Optimizer):
 
         rho = self.defaults['rho']
 
-        # Base optimizer step
         self.base_optimizer.step(closure)
 
-        # ADMM update
         with torch.no_grad():
             for i, param in enumerate(self.param_groups[0]['params']):
                 self.z[i] = self.z[i].to(param.device)
@@ -35,7 +33,7 @@ class ADMMOptimizer(optim.Optimizer):
     def proximal_mapping(tensor, rho):
         delta = 0.7 * tensor.norm(1).item() / tensor.numel()
         alpha = 0.7 * tensor.abs().mean().item()
-        return alpha * ((tensor.abs() > delta).float() * tensor.sign())
+        return alpha * ((tensor.abs() > delta / rho).float() * tensor.sign())
 
     def zero_grad(self, set_to_none=False):
         self.base_optimizer.zero_grad(set_to_none=set_to_none)

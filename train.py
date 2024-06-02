@@ -1,6 +1,13 @@
 import torch
 
 
+def print_parameter_values(net):
+    for name, param in net.named_parameters():
+        if param.requires_grad:
+            unique_values = torch.unique(param.data).cpu().numpy()
+            print(f'Parameter: {name}, Unique values: {unique_values}')
+
+
 def train_model(net, trainloader, valloader, criterion, optimizer, device, epochs=5):
     net.to(device)
     train_losses = []
@@ -32,6 +39,7 @@ def train_model(net, trainloader, valloader, criterion, optimizer, device, epoch
         val_losses.append(val_loss / len(valloader))
 
         print(f'Epoch {epoch + 1}, Training Loss: {train_losses[-1]:.3f}, Validation Loss: {val_losses[-1]:.3f}')
+        print_parameter_values(net)
 
     print('Finished Training')
     return train_losses, val_losses
