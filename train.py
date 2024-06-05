@@ -36,10 +36,12 @@ def train_model(net, trainloader, valloader, criterion, optimizer, device, epoch
                 outputs = net(inputs)
                 loss = criterion(outputs, labels)
                 val_loss += loss.item()
-        val_losses.append(val_loss / len(valloader))
+
+        val_loss /= len(valloader)
+        val_losses.append(val_loss)
 
         print(f'Epoch {epoch + 1}, Training Loss: {train_losses[-1]:.3f}, Validation Loss: {val_losses[-1]:.3f}')
-        print_parameter_values(net)
+        # print_parameter_values(net)
 
-    print('Finished Training')
+    print('Finished training')
     return train_losses, val_losses

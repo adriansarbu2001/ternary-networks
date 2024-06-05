@@ -2,6 +2,7 @@ import torch
 
 
 def test_model(net, testloader, device):
+    net.eval()
     net.to(device)
     correct = 0
     total = 0
@@ -13,4 +14,4 @@ def test_model(net, testloader, device):
             _, predicted = torch.max(outputs.data, 1)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
-    print(f'Accuracy of the network on the {total} test images: {100 * correct / total:.2f}%')
+    print(f'Accuracy of the network on {total} test images: {100 * correct / total:.2f}%')

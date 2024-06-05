@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 import random
 import numpy as np
 
@@ -29,62 +30,30 @@ def main(model_type="cnn"):
     trainloader, valloader, testloader = get_data_loaders()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f'Using device: {device}')
+    lr = 0.01
+    print(f'Learning rate: {lr}')
 
     net = SimpleCNN()
-    optimizer = optim.Adam(net.parameters(), lr=0.005)
+    optimizer = optim.Adam(net.parameters(), lr=lr)
     if model_type == "cnn":
-        net = SimpleCNN()
-        optimizer = optim.Adam(net.parameters(), lr=0.005)
+        net = SimpleCNN(with_batch_norm=True)
+        optimizer = optim.Adam(net.parameters(), lr=lr)
     elif model_type == "twn":
-        net = SimpleTWN()
-        optimizer = optim.Adam(net.parameters(), lr=0.02)
+        net = SimpleTWN(with_batch_norm=False)
+        optimizer = optim.Adam(net.parameters(), lr=lr)
     elif model_type == "admm":
-        net = SimpleCNN()
-        optimizer = ADMMOptimizer(net.parameters(), rho=1e-4, base_optimizer_cls=optim.Adam, lr=0.005)
+        net = SimpleCNN(with_batch_norm=False)
+        optimizer = ADMMOptimizer(net.parameters(), base_optimizer_cls=optim.Adam, lr=lr)
 
     criterion = nn.CrossEntropyLoss()
 
-    train_losses, val_losses = train_model(net, trainloader, valloader, criterion, optimizer, device, epochs=5)
-    test_model(net, testloader, device)
+    train_losses, val_losses = train_model(net, trainloader, valloader, criterion, optimizer, device, epochs=50)
+    torch.save(net.state_dict(), f'simple_{model_type}.pth')
     plot_losses(train_losses, val_losses)
+
+    net.load_state_dict(torch.load(f'simple_{model_type}.pth'))
+    test_model(net, testloader, device)
 
 
 if __name__ == "__main__":
-    main(model_type="admm")
-
-
-"""
-SimpleCNN output:
-Using device: cuda:0
-Epoch 1, Training Loss: 0.520, Validation Loss: 0.145
-Epoch 2, Training Loss: 0.117, Validation Loss: 0.101
-Epoch 3, Training Loss: 0.077, Validation Loss: 0.101
-Epoch 4, Training Loss: 0.050, Validation Loss: 0.093
-Epoch 5, Training Loss: 0.037, Validation Loss: 0.073
-Finished Training
-Accuracy of the network on the 2000 test images: 98.00%
-"""
-
-"""
-SimpleTWN output:
-Using device: cuda:0
-Epoch 1, Training Loss: 2.701, Validation Loss: 2.324
-Epoch 2, Training Loss: 1.101, Validation Loss: 0.371
-Epoch 3, Training Loss: 0.347, Validation Loss: 0.367
-Epoch 4, Training Loss: 0.347, Validation Loss: 0.365
-Epoch 5, Training Loss: 0.348, Validation Loss: 0.366
-Finished Training
-Accuracy of the network on the 2000 test images: 89.90%
-"""
-
-"""
-ADMM output:
-Using device: cuda:0
-Epoch 1, Training Loss: 0.710, Validation Loss: 0.219
-Epoch 2, Training Loss: 0.165, Validation Loss: 0.139
-Epoch 3, Training Loss: 0.106, Validation Loss: 0.095
-Epoch 4, Training Loss: 0.076, Validation Loss: 0.097
-Epoch 5, Training Loss: 0.067, Validation Loss: 0.088
-Finished Training
-Accuracy of the network on the 2000 test images: 98.20%
-"""
+    main(model_type="twn")

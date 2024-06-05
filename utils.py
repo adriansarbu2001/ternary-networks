@@ -1,4 +1,12 @@
 import matplotlib.pyplot as plt
+import torch
+
+
+def ternarize(tensor, alpha):
+    delta = 0.7 * torch.mean(torch.abs(tensor))
+    tensor_tern = torch.zeros_like(tensor)
+    tensor_tern[tensor.abs() >= delta] = torch.sign(tensor[tensor.abs() >= delta]) * alpha
+    return tensor_tern
 
 
 def plot_losses(train_losses, val_losses):

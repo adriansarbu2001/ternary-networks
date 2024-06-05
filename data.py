@@ -7,7 +7,7 @@ from torch.utils.data import Subset
 def get_data_loaders(batch_size=64, train_size=10000, val_size=5000, test_size=2000):
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))
+        transforms.Normalize((0.1307,), (0.3081,))
     ])
 
     trainset = torchvision.datasets.MNIST(root='./data', train=True, download=True, transform=transform)
