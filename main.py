@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 import random
 import numpy as np
 
@@ -51,12 +50,12 @@ def main(model_type="cnn"):
     criterion = nn.CrossEntropyLoss()
 
     train_losses, val_losses = train_model(net, trainloader, valloader, criterion, optimizer, device, epochs=30)
-    torch.save(net.state_dict(), f'models/simple_{model_type}_restricted_alpha.pth')
+    torch.save(net.state_dict(), f'models/simple_{model_type}.pth')
 
-    net.load_state_dict(torch.load(f'models/simple_{model_type}_restricted_alpha.pth'))
-    test_model(net, testloader, device)
+    net.load_state_dict(torch.load(f'models/simple_{model_type}.pth'))
+    print(test_model(net, testloader, device))
     plot_losses(train_losses, val_losses)
 
 
 if __name__ == "__main__":
-    main(model_type="cnn")
+    main(model_type="twn")

@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import torch
+import datetime
 
 
 def ternarize(tensor, alpha):
@@ -18,3 +19,11 @@ def plot_losses(train_losses, val_losses):
     plt.legend()
     plt.title('Training and Validation Loss')
     plt.show()
+
+
+def log_message(message, log_file='experiment_log.txt', also_print=False):
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    with open(log_file, 'a') as f:
+        f.write(f'[{timestamp}] {message}\n')
+    if also_print:
+        print(f'[{timestamp}] {message}')
