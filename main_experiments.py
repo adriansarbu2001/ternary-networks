@@ -78,6 +78,8 @@ def main():
         {'model_type': 'admm', 'with_batch_norm': False, 'fixed_alpha': 1.0},
     ]
 
+    log_message("")
+
     for experiment in experiments:
         result_accuracy = pd.DataFrame(index=epochs, columns=learning_rates)
         result_cost = pd.DataFrame(index=epochs, columns=learning_rates)
@@ -114,8 +116,6 @@ def main():
 
         result_accuracy.to_csv(f'results/{experiment_folder_name}/accuracy.csv')
         result_cost.to_csv(f'results/{experiment_folder_name}/cost.csv')
-
-    log_message("")
 
 
 if __name__ == "__main__":
