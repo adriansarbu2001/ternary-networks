@@ -1,0 +1,24 @@
+Using device: cuda:0
+Learning rate: 0.005
+Epoch 1, Training Loss: 2.308, Validation Loss: 2.307
+Epoch 2, Training Loss: 2.306, Validation Loss: 2.305
+Epoch 3, Training Loss: 2.304, Validation Loss: 2.299
+Epoch 4, Training Loss: 2.296, Validation Loss: 2.293
+Epoch 5, Training Loss: 1.453, Validation Loss: 0.429
+Epoch 6, Training Loss: 0.405, Validation Loss: 0.432
+Epoch 7, Training Loss: 0.406, Validation Loss: 0.428
+Epoch 8, Training Loss: 0.409, Validation Loss: 0.429
+Epoch 9, Training Loss: 0.406, Validation Loss: 0.427
+Epoch 10, Training Loss: 0.404, Validation Loss: 0.428
+Epoch 11, Training Loss: 0.405, Validation Loss: 0.428
+Epoch 12, Training Loss: 0.407, Validation Loss: 0.429
+Epoch 13, Training Loss: 0.406, Validation Loss: 0.428
+Epoch 14, Training Loss: 0.405, Validation Loss: 0.428
+Epoch 15, Training Loss: 0.408, Validation Loss: 0.429
+Epoch 16, Training Loss: 0.405, Validation Loss: 0.428
+Epoch 17, Training Loss: 0.405, Validation Loss: 0.428
+Epoch 18, Training Loss: 0.406, Validation Loss: 0.429
+Epoch 19, Training Loss: 0.407, Validation Loss: 0.429
+Epoch 20, Training Loss: 0.406, Validation Loss: 0.427
+Finished training
+Accuracy of the network on 2000 test images: 87.80%

@@ -30,7 +30,7 @@ def main(model_type="cnn"):
     trainloader, valloader, testloader = get_data_loaders()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(f'Using device: {device}')
-    lr = 0.01
+    lr = 0.005
     print(f'Learning rate: {lr}')
 
     net = SimpleCNN()
@@ -40,20 +40,23 @@ def main(model_type="cnn"):
         optimizer = optim.Adam(net.parameters(), lr=lr)
     elif model_type == "twn":
         net = SimpleTWN(with_batch_norm=False)
+        # net = SimpleTWN(with_batch_norm=True, fixed_alpha=1.0)
         optimizer = optim.Adam(net.parameters(), lr=lr)
     elif model_type == "admm":
         net = SimpleCNN(with_batch_norm=False)
         optimizer = ADMMOptimizer(net.parameters(), base_optimizer_cls=optim.Adam, lr=lr)
+        # net = SimpleCNN(with_batch_norm=True)
+        # optimizer = ADMMOptimizer(net.parameters(), fixed_alpha=1.0, base_optimizer_cls=optim.Adam, lr=lr)
 
     criterion = nn.CrossEntropyLoss()
 
-    train_losses, val_losses = train_model(net, trainloader, valloader, criterion, optimizer, device, epochs=50)
-    torch.save(net.state_dict(), f'simple_{model_type}.pth')
-    plot_losses(train_losses, val_losses)
+    train_losses, val_losses = train_model(net, trainloader, valloader, criterion, optimizer, device, epochs=30)
+    torch.save(net.state_dict(), f'models/simple_{model_type}_restricted_alpha.pth')
 
-    net.load_state_dict(torch.load(f'simple_{model_type}.pth'))
+    net.load_state_dict(torch.load(f'models/simple_{model_type}_restricted_alpha.pth'))
     test_model(net, testloader, device)
+    plot_losses(train_losses, val_losses)
 
 
 if __name__ == "__main__":
-    main(model_type="twn")
+    main(model_type="cnn")

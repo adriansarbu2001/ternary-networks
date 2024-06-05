@@ -5,9 +5,10 @@ from utils import ternarize
 
 
 class ADMMOptimizer(optim.Optimizer):
-    def __init__(self, params, base_optimizer_cls=optim.SGD, **base_optimizer_args):
+    def __init__(self, params, fixed_alpha=None, base_optimizer_cls=optim.SGD, **base_optimizer_args):
         defaults = dict(base_optimizer_args=base_optimizer_args)
         super(ADMMOptimizer, self).__init__(params, defaults)
+        self.fixed_alpha = fixed_alpha
         self.base_optimizer = base_optimizer_cls(self.param_groups, **base_optimizer_args)
         self.z = [torch.zeros_like(p.data) for p in self.param_groups[0]['params']]
         self.u = [torch.zeros_like(p.data) for p in self.param_groups[0]['params']]
@@ -24,7 +25,11 @@ class ADMMOptimizer(optim.Optimizer):
                 self.z[i] = self.z[i].to(param.device)
                 self.u[i] = self.u[i].to(param.device)
                 tensor = param.data + self.u[i]
-                self.z[i].copy_(ternarize(tensor, alpha=0.7 * tensor.abs().mean().item()))
+                if self.fixed_alpha is None:
+                    alpha = 0.7 * tensor.abs().mean().item()
+                else:
+                    alpha = self.fixed_alpha
+                self.z[i].copy_(ternarize(tensor, alpha=alpha))
                 self.u[i].add_(param.data - self.z[i])
                 param.data.copy_(self.z[i])
 
