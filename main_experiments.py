@@ -64,7 +64,7 @@ def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     log_message(f'Using device: {device}', also_print=True)
 
-    learning_rates = [0.01, 0.005, 0.001, 0.005, 0.0001, 0.00005, 0.00001]
+    learning_rates = [0.01, 0.005, 0.001, 0.0005, 0.0001, 0.00005, 0.00001]
     # learning_rates = [0.01, 0.005]
     epochs = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     # epochs = [2, 3]
