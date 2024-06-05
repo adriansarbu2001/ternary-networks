@@ -82,7 +82,7 @@ def main():
         result_accuracy = pd.DataFrame(index=epochs, columns=learning_rates)
         result_cost = pd.DataFrame(index=epochs, columns=learning_rates)
 
-        experiment_folder_name = f'{experiment["model_type"]}_batchnorm{experiment["with_batch_norm"]}_alpha{"unrestricted" if experiment["fixed_alpha"] is None else "restricted"}'
+        experiment_folder_name = f'{experiment["model_type"]}_batchnorm{experiment["with_batch_norm"]}_alpha{"Unrestricted" if experiment["fixed_alpha"] is None else "Restricted"}'
 
         for lr in learning_rates:
             model_type = experiment["model_type"]
